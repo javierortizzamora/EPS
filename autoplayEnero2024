@@ -1,0 +1,49 @@
+<div><video id="video-eps" style="float: left;" title="EPS UA, Escuela Politécnica Superior, Universidad de Alicante" autoplay="autoplay" loop="loop" muted="" width="100%" height="100%">
+	<source src="https://eps.ua.es/va/videos/epsalicante-eps-ua-video-autoplay-enero-2024.webm" type="video/webm" />
+	<source src="https://eps.ua.es/va/videos/epsalicante-eps-ua-video-autoplay-enero-2024.mp4" type="video/mp4" />	
+	</video>
+	<script>
+
+		function epsVideoLink(video, links) {
+			if (typeof video === "string") video = document.getElementById(video); // si video es un string buscar ese ID
+			if (!video) { console.error("Video not found"); return; }
+			const vTitle = video.getAttribute("title");
+			video.setAttribute("playsinline","playsinline");
+			let linkElm = video.parentElement;
+			if (linkElm.tagName !== "A") { // el video no tiene enlace
+				linkElm = document.createElement("A"); // crear el enlace
+				video.after(linkElm);
+				linkElm.append(video); // envolver el video
+			}
+			let link = null; // link actual
+
+			function update() { // Actualiza el link
+
+				// Cambio de link
+				if (!link || link.start > video.currentTime || link.end <= video.currentTime) { // hay que actualizar el link
+					if (link) { // ocultar link anterior
+						linkElm.removeAttribute("href");
+						linkElm.removeAttribute("title");
+						video.setAttribute("title", vTitle);
+					}
+					// Buscar siguiente link
+					link = links.find(l => l.start <= video.currentTime && l.end > video.currentTime);
+					if (link) { // configurar link
+						linkElm.setAttribute("href", link.url);
+						if (link.title) {
+							linkElm.setAttribute("title", link.title);
+							video.setAttribute("title", link.title);
+						}
+					}
+				}
+				setTimeout(update, 100); // actualizar cada 100ms
+			}
+			update();
+		}
+
+		epsVideoLink("video-eps", [
+			//	{ start: 1, end: 7, url: "https://eps.ua.es/es/estudios/grados.html", title: "Grados EPS UA, Grados Escuela Politecnica Superior, Grados UA" },
+			{ start: 4, end: 18, url: "https://eps.ua.es/es/escuela-politecnica-alicante.html#Redes-Sociales-EPS-UA", title: "EPS UA, EPSAlicante, Universidad de Alicante" },
+		]);
+	</script>
+</div>
